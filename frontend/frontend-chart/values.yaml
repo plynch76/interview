@@ -8,7 +8,7 @@ image:
   repository: plynch76/tekmetric
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1"
+  tag: "v7"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -38,7 +38,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
@@ -71,7 +71,7 @@ resources: {}
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
@@ -82,9 +82,11 @@ tolerations: []
 affinity: {}
 
 metrics:
-  service:
-    annotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/path: "/metrics"
-      prometheus.io/port: "{{ .Values.metrics.service.port }}"
-    port: 9095
+  enabled: true
+  path: /metrics
+  port: 8080
+
+volumeMounts:
+  enabled: false     # change to true if you actually need to mount something
+  mountPath: /app
+  hostPath: /tmp/app # must be absolute, not ./
